@@ -1,9 +1,8 @@
 import sys
-import time
+from datetime import datetime
 
 from PyQt5 import uic, Qt
 from PyQt5.QtWidgets import QDialog
-from PyQt5.uic.Compiler.qtproxies import QtGui
 
 
 class Calculator(QDialog):
@@ -58,7 +57,6 @@ class Calculator(QDialog):
     def __b_calc_clicked(self, symbol):
         if not self.test_started:
             self.test_started = self.__note_test_state_change("BUTTON", self.test_started)
-        self.__generate_timestamp(symbol, "BUTTON")
         if symbol == "res":
             self.__calc_result()
         elif symbol == "bs":
@@ -67,6 +65,9 @@ class Calculator(QDialog):
             self.calc_string = ""
         else:
             self.calc_string += symbol
+        if symbol == ",":
+            symbol = "."
+        self.__generate_timestamp(symbol, "BUTTON")
         self.update()
 
     """
@@ -113,8 +114,10 @@ class Calculator(QDialog):
                 return
         if self.__filter_char(k):  # Last filter
             return
-        self.__generate_timestamp(k, input_type)
         self.calc_string += k
+        if k == ",":
+            k = "."
+        self.__generate_timestamp(k, input_type)
         self.update()
 
     """
@@ -132,7 +135,7 @@ class Calculator(QDialog):
 
     @staticmethod
     def __generate_timestamp(symbol, input_type):
-        print(str(time.time()) + ", " + str(symbol) + ",", input_type)
+        print(str(datetime.now()) + ", " + str(symbol) + ",", input_type)
 
     def __note_test_state_change(self, input_type, state):
         event_name = "START"
